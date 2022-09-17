@@ -1,10 +1,20 @@
 from number import NUMBER
 from natasha.extractors import Extractor
-from yargy.parser import Match
+
 
 class NumberExtractor(Extractor):
     def __init__(self):
         super(NumberExtractor, self).__init__(NUMBER)
+
+    @staticmethod
+    def number_of_digits(number):
+        num = (number.int * number.multiplier) if number.multiplier else number.int
+
+        number_of_digits = 0
+        while num >= 1:
+            num /= 10
+            number_of_digits += 1
+        return number_of_digits
 
     def replace(self, text):
         """
@@ -35,7 +45,8 @@ class NumberExtractor(Extractor):
                 return new_text
         else:
             return None
-    
+
+    # TODO переписать. Сейчас алгоритм очень трудно воспринимается
     def replace_groups(self, text):
         """
         Замена сгруппированных составных чисел в тексте
@@ -60,7 +71,17 @@ class NumberExtractor(Extractor):
                 else:
                     next_match = matches[i + 1]
                 group_matches.append(match.fact)
-                if text[match.span.stop: next_match.span.start].strip() or next_match == match:
+
+                # Если условие срабатывает, то значит, что группа завершена
+                # Условие:
+                # - если между текущим и следующим числом есть что-то в тексте
+                # - если число является последним
+                # - если у следующего числа разряд меньше, чем у текущего
+                # - если следующее число = 0
+                if text[match.span.stop: next_match.span.start].strip() \
+                        or next_match == match \
+                        or self.number_of_digits(match.fact) - self.number_of_digits(next_match.fact) <= 0\
+                        or next_match.fact.int == 0:
                     groups.append((group_matches, start, match.span.stop))
                     group_matches = []
                     start = next_match.span.start
