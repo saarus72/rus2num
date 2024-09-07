@@ -1,10 +1,10 @@
 import pytest
-from extractor_new import NumberExtractor
+from rus2num import Rus2Num
 
 
 @pytest.fixture(scope='module')
 def extractor():
-    return NumberExtractor()
+    return Rus2Num()
 
 
 tests = [
@@ -38,7 +38,7 @@ tests2 = [
 ]
 
 
-@pytest.mark.parametrize('test', 'hui', [tests, NumberExtractor().replace_groups])
+@pytest.mark.parametrize('test', 'replace', [tests, Rus2Num().__call__])
 # @pytest.mark.parametrize('test, replace', [tests, extractor.replace_groups_sa])
 def test_extractor(test, hui):
     text, etalon = test[0]
