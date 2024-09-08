@@ -1,5 +1,6 @@
-from .number import NUMBER
 from natasha.extractors import Extractor
+
+from .number import NUMBER
 
 
 class Rus2Num(Extractor):
@@ -9,7 +10,7 @@ class Rus2Num(Extractor):
     @staticmethod
     def __n_digits(n: int):
         return len(str(n))
-        
+
     @staticmethod
     def __trailing_zeros(n: int):
         """
@@ -39,7 +40,7 @@ class Rus2Num(Extractor):
             else:
                 next_match = matches[i + 1]
             group_matches.append(match.fact)
-            if text[match.span.stop: next_match.span.start].strip() or next_match == match:
+            if text[match.span.stop : next_match.span.start].strip() or next_match == match:
                 groups.append((group_matches, start, match.span.stop))
                 group_matches = []
                 start = next_match.span.start
@@ -58,16 +59,20 @@ class Rus2Num(Extractor):
         groups = self._get_groups(text)
         new_text, start = "", 0
         for group in groups:
-            new_text += text[start:group[1]]
+            new_text += text[start : group[1]]
             nums = []
             prev_tz, prev_mult = 0, None
             for match in group[0]:
                 mult = match.multiplier if match.multiplier else 1
                 curr_num = (match.int if match.int is not None else 1) + (match.with_half or 0)
                 tz = self.__trailing_zeros(curr_num)
-                if tz < prev_tz and mult >= prev_mult and curr_num != 0 and \
-                        self.__n_digits(curr_num) < self.__n_digits(nums[0][0]) and \
-                        self.__n_digits(curr_num) <= prev_tz:
+                if (
+                    tz < prev_tz
+                    and mult >= prev_mult
+                    and curr_num != 0
+                    and self.__n_digits(curr_num) < self.__n_digits(nums[0][0])
+                    and self.__n_digits(curr_num) <= prev_tz
+                ):
                     nums[0] = (nums[0][0] + curr_num, mult)
                 else:
                     nums.insert(0, (curr_num, mult))
@@ -75,11 +80,11 @@ class Rus2Num(Extractor):
             prev_mult = None
             new_nums = []
             for num, mult in nums:
-                if mult == 10 ** -1:
+                if mult == 10**-1:
                     power = 1
-                elif mult == 10 ** -2:
+                elif mult == 10**-2:
                     power = 2
-                elif mult == 10 ** -3:
+                elif mult == 10**-3:
                     power = 3
                 else:
                     power = None
