@@ -9,7 +9,7 @@ class Rus2Num(Extractor):
 
     @staticmethod
     def __n_digits(n: int):
-        return len(str(n))
+        return len(str(int(n)))
 
     @staticmethod
     def __trailing_zeros(n: int):
