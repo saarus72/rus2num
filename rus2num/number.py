@@ -54,7 +54,7 @@ NUMS_RAW_BIG = {
 
 DOT = eq(".")
 INT = type("INT")
-BILLIONTH = rule(caseless_pipeline(["миллиардных", "миллиардная"])).interpretation(const(10**-6))
+BILLIONTH = rule(caseless_pipeline(["миллиардных", "миллиардная"])).interpretation(const(10**-9))
 MILLIONTH = rule(caseless_pipeline(["миллионных", "миллионная"])).interpretation(const(10**-6))
 THOUSANDTH = rule(caseless_pipeline(["тысячных", "тысячная"])).interpretation(const(10**-3))
 HUNDREDTH = rule(caseless_pipeline(["сотых", "сотая"])).interpretation(const(10**-2))
