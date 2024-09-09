@@ -17,10 +17,10 @@ class Rus2Num(Extractor):
         Count trailing zeros of a number
 
         Args:
-            n: number
+            n (int): Number
 
-        Result:
-            cnt: count of zeros
+        Returns:
+            int: Count of zeros
         """
         cnt = 0
         while n % 10 == 0 and n != 0:
@@ -28,7 +28,16 @@ class Rus2Num(Extractor):
             n = n / 10
         return cnt
 
-    def _get_groups(self, text):
+    def _get_groups(self, text: str):
+        """
+        Extract a list of numeral matches from a `text`
+
+        Args:
+            text (str): Input text
+
+        Returns:
+            list: List of match objects according to the `NUMBER` definition
+        """
         start = 0
         matches = list(self.parser.findall(text))
         groups, group_matches = [], []
@@ -46,15 +55,15 @@ class Rus2Num(Extractor):
                 start = next_match.span.start
         return groups
 
-    def __call__(self, text):
+    def __call__(self, text: str):
         """
-        Замена сгруппированных составных чисел в тексте и отдельно стоящих чисел без их суммирования
+        Change numerals on numbers (letters to digits) within a `text`
 
-        Аргументы:
-            text: исходный текст
+        Args:
+            text (str): Input text
 
-        Результат:
-            new_text: текст с замененными числами
+        Returns:
+            str: Transformed text
         """
         groups = self._get_groups(text)
         new_text, start = "", 0
@@ -68,7 +77,9 @@ class Rus2Num(Extractor):
                 tz = self.__trailing_zeros(curr_num)
                 if (
                     tz < prev_tz
-                    and mult >= prev_mult
+                    and not (0 < mult < 1 and prev_mult > 1)
+                    and not (mult > 1 and 0 < prev_mult < 1)
+                    and (mult >= prev_mult if (mult > 1 or prev_mult > 1) else mult <= prev_mult)
                     and curr_num != 0
                     and self.__n_digits(curr_num) < self.__n_digits(nums[0][0])
                     and self.__n_digits(curr_num) <= prev_tz

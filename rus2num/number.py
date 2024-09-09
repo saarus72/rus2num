@@ -77,6 +77,8 @@ WITH_HALF = (
     .interpretation(Number.with_half)
 )
 MULTIPLIER = or_(
+    BILLIONTH,
+    MILLIONTH,
     THOUSANDTH,
     HUNDREDTH,
     TENTH,
