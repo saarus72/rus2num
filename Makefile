@@ -1,3 +1,5 @@
+include .env-local
+
 init:
 	pip install black isort flake8 pytest
 lint:
@@ -7,3 +9,8 @@ lint:
 
 test:
 	pytest ./tests/
+
+publish_test:
+	poetry publish -r testpypi --username __token__ --password $(TESTPYPI_TOKEN) --build
+publish:
+	poetry publish --username __token__ --password $(PYPI_TOKEN) --build
